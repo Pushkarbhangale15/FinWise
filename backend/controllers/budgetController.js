@@ -145,8 +145,9 @@ const addExpense = async (req, res) => {
     const { category, description, amount } = req.body;
     const normalizedCategory = category.toLowerCase().trim(); // Normalize input
     const currentMonth = new Date().toISOString().substring(0, 7);
+    const defaultExpenseCategories = ['food', 'books', 'entertainment', 'transport', 'housing', 'utilities', 'healthcare', 'clothing', 'other'];
 
-    const budget = await Budget.findOne({
+    let budget = await Budget.findOne({
       userId: req.user._id,
       month: currentMonth
     });
@@ -156,6 +157,20 @@ const addExpense = async (req, res) => {
         success: false,
         message: 'No budget found for current month'
       });
+    }
+
+    // Auto-fix: Add missing expense categories to existing budgets
+    const existingCategories = budget.expenses.map(exp => exp.category);
+    const missingCategories = defaultExpenseCategories.filter(cat => !existingCategories.includes(cat));
+    
+    if (missingCategories.length > 0) {
+      const newCategories = missingCategories.map(category => ({
+        category,
+        budgeted: 0,
+        actual: 0,
+        transactions: []
+      }));
+      budget.expenses = [...budget.expenses, ...newCategories];
     }
 
     // Find the expense category (case-insensitive)
