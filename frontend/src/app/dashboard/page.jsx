@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, memo } from "react";
 import { motion } from "framer-motion";
 import {
   BookOpen,
@@ -83,6 +83,75 @@ const bounceVariants = {
   },
 };
 
+const BadgeItem = memo(function BadgeItem({ badge, index }) {
+  const [isTooltipVisible, setIsTooltipVisible] = useState(false);
+  const timerRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+    };
+  }, []);
+
+  const onEnter = () => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => setIsTooltipVisible(true), 500);
+  };
+
+  const onLeave = () => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+    setIsTooltipVisible(false);
+  };
+
+  return (
+    <motion.div
+      key={index}
+      initial={{ opacity: 0, scale: 0.5 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ delay: index * 0.1 }}
+      whileHover={{ scale: 1.05 }}
+      onMouseEnter={onEnter}
+      onMouseLeave={onLeave}
+      className="relative"
+    >
+      <div
+        className={`p-3 text-center border rounded-lg ${
+          badge.earned
+            ? "bg-gradient-to-r from-yellow-100 to-yellow-200 dark:from-yellow-900/50 dark:to-yellow-800/50 border-yellow-300 dark:border-yellow-600"
+            : "bg-gray-100 dark:bg-gray-700 border-gray-200 dark:border-gray-600"
+        }`}
+      >
+        <div className="text-2xl mb-1">{badge.icon}</div>
+        <p
+          className={`text-xs font-medium ${
+            badge.earned
+              ? "text-yellow-800 dark:text-yellow-200"
+              : "text-gray-500 dark:text-gray-400"
+          }`}
+        >
+          {badge.name}
+        </p>
+      </div>
+      {isTooltipVisible && badge.description && (
+        <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-30 pointer-events-none">
+          <div className="relative">
+            <div className="bg-gray-900 dark:bg-gray-800 text-white dark:text-gray-100 text-xs rounded-md px-3 py-2 shadow-lg max-w-[14rem] whitespace-normal">
+              {badge.description}
+            </div>
+            <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-900 dark:bg-gray-800 rotate-45"></div>
+          </div>
+        </div>
+      )}
+    </motion.div>
+  );
+});
+
 export default function Dashboard() {
   useAuth();
 
@@ -117,6 +186,7 @@ export default function Dashboard() {
   }, []);
 
   console.log("dashboard data: ", dashboard);
+
   useEffect(() => {
     const fetchBadges = async () => {
       // Skip fetching when there are no badges
@@ -183,11 +253,13 @@ export default function Dashboard() {
   const badges = badge?.map((badgeItem) => ({
     name: badgeItem.name,
     icon: badgeItem.icon || "🏆",
+    description: badgeItem.description,
     earned: true,
   })) ||
     dashboard?.badges?.map((badge) => ({
       name: badge.name,
       icon: badge.icon || "🏆",
+      description: badge.description,
       earned: true,
     })) || [
       { name: "Budget Master", icon: "💰", earned: false },
@@ -643,37 +715,11 @@ export default function Dashboard() {
 
                         <div className="grid grid-cols-2 gap-3">
                           {badges.map((badge, index) => (
-                            <motion.div
-                              key={index}
-                              initial={{ opacity: 0, scale: 0.5 }}
-                              animate={{ opacity: 1, scale: 1 }}
-                              transition={{ delay: index * 0.1 }}
-                              whileHover={{ scale: 1.05 }}
-                            >
-                              <div
-                                className={`p-3 text-center border rounded-lg ${
-                                  badge.earned
-                                    ? "bg-gradient-to-r from-yellow-100 to-yellow-200 dark:from-yellow-900/50 dark:to-yellow-800/50 border-yellow-300 dark:border-yellow-600"
-                                    : "bg-gray-100 dark:bg-gray-700 border-gray-200 dark:border-gray-600"
-                                }`}
-                              >
-                                <div className="text-2xl mb-1">
-                                  {badge.icon}
-                                </div>
-                                <p
-                                  className={`text-xs font-medium ${badge.earned ? "text-yellow-800 dark:text-yellow-200" : "text-gray-500 dark:text-gray-400"}`}
-                                >
-                                  {badge.name}
-                                </p>
-                                {badge.description && (
-                                  <p
-                                    className={`text-xs mt-1 ${badge.earned ? "text-yellow-700 dark:text-yellow-300" : "text-gray-400 dark:text-gray-500"}`}
-                                  >
-                                    {badge.description}
-                                  </p>
-                                )}
-                              </div>
-                            </motion.div>
+                            <BadgeItem
+                              badge={badge}
+                              index={index}
+                              key={`${badge.name}-${index}`}
+                            />
                           ))}
                         </div>
                       </div>
@@ -753,7 +799,7 @@ export default function Dashboard() {
                               Total Income
                             </h4>
                             <p className="text-2xl font-bold text-green-600 dark:text-green-400">
-                              ${dashboard.budget.totalIncome}
+                              ₹{dashboard.budget.totalIncome}
                             </p>
                           </div>
                           <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
@@ -761,7 +807,7 @@ export default function Dashboard() {
                               Total Spent
                             </h4>
                             <p className="text-2xl font-bold text-red-600 dark:text-red-400">
-                              ${dashboard.budget.totalActual}
+                              ₹{dashboard.budget.totalActual}
                             </p>
                           </div>
                           <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
@@ -769,7 +815,7 @@ export default function Dashboard() {
                               Remaining
                             </h4>
                             <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                              ${dashboard.budget.remainingBudget}
+                              ₹{dashboard.budget.remainingBudget}
                             </p>
                           </div>
                         </div>
