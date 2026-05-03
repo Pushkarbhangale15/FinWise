@@ -394,7 +394,7 @@ export default function Dashboard() {
                     </div>
                   </div>
                 </motion.div>
-                {/* 
+
                 <motion.div
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -402,8 +402,10 @@ export default function Dashboard() {
                 >
                   <div className="bg-white rounded-lg shadow-sm p-6">
                     <h3 className="text-lg font-bold mb-2">Weekly Challenge</h3>
-                    <p className="text-gray-600 mb-4">Complete to earn bonus XP</p>
-                    
+                    <p className="text-gray-600 mb-4">
+                      Complete to earn bonus XP
+                    </p>
+
                     <div className="text-center">
                       <motion.div
                         animate={{ rotate: [0, 10, -10, 0] }}
@@ -412,13 +414,23 @@ export default function Dashboard() {
                       >
                         💰
                       </motion.div>
-                      <p className="font-medium mb-2">Track expenses for 7 days</p>
+                      <p className="font-medium mb-2">
+                        Track expenses for 7 days
+                      </p>
                       <div className="bg-gray-200 rounded-full h-2 mb-2">
-                        <div className="bg-blue-500 h-2 rounded-full" style={{ width: '60%' }} />
+                        <div
+                          className="bg-blue-500 h-2 rounded-full"
+                          style={{ width: "60%" }}
+                        />
                       </div>
-                      <p className="text-gray-600 text-sm mb-3">4/7 days completed</p>
+                      <p className="text-gray-600 text-sm mb-3">
+                        4/7 days completed
+                      </p>
                       <Link href="/budget-planner" className="no-underline">
-                        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                        <motion.div
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                        >
                           <button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
                             Continue Challenge
                           </button>
@@ -426,7 +438,7 @@ export default function Dashboard() {
                       </Link>
                     </div>
                   </div>
-                </motion.div> */}
+                </motion.div>
               </div>
             </div>
           </TabPanel>
