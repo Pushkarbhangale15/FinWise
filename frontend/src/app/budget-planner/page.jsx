@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { SunIcon, MoonIcon } from "@heroicons/react/24/outline";
 import {
@@ -41,6 +41,7 @@ import {
   Tooltip,
 } from "recharts";
 import Link from "next/link";
+import { useTheme } from "../../contexts/ThemeContext";
 
 const COLORS = [
   "#3B82F6",
@@ -83,32 +84,7 @@ const cardVariants = {
 };
 
 export default function BudgetPlannerPage() {
-  const [theme, setTheme] = useState("light");
-
-  useEffect(() => {
-    // Check for saved theme preference or use system preference
-    const savedTheme =
-      localStorage.getItem("theme") ||
-      (window.matchMedia("(prefers-color-scheme: dark)").matches
-        ? "dark"
-        : "light");
-    setTheme(savedTheme);
-  }, []);
-
-  useEffect(() => {
-    // Apply the theme class to the document
-    if (theme === "dark") {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-    // Save the theme preference
-    localStorage.setItem("theme", theme);
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme(theme === "light" ? "dark" : "light");
-  };
+  const { theme, toggleTheme } = useTheme();
 
   const [transactions, setTransactions] = useState([
     {
