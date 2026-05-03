@@ -30,8 +30,16 @@ import {
 import Link from "next/link";
 import { useTheme, toggleTheme } from "../../contexts/ThemeContext";
 import { SunIcon, MoonIcon } from "@heroicons/react/24/outline";
+import { logout } from "@/services/authServices";
+import { LogOut } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 export default function MentorPage() {
+  const pathname = usePathname();
+
+  const isActive = (path) => {
+    return pathname === path;
+  };
   const [messages, setMessages] = useState([
     {
       id: "1",
@@ -127,57 +135,138 @@ export default function MentorPage() {
   return (
     <Box className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 pb-12">
       {/* Header */}
-      <Paper
-        elevation={0}
-        sx={{
-          borderBottom: "1px solid #e0e0e0",
-          backgroundColor: "rgba(255, 255, 255, 0.9)",
-          backdropFilter: "blur(10px)",
-          position: "sticky",
+      {/* <Paper 
+        elevation={0} 
+        sx={{ 
+          borderBottom: '1px solid #e0e0e0',
+          backgroundColor: 'rgba(255, 255, 255, 0.9)',
+          backdropFilter: 'blur(10px)',
+          position: 'sticky',
           top: 0,
-          zIndex: 1000,
+          zIndex: 1000
         }}
         className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 backdrop-blur-sm"
       >
         <Container maxWidth="lg">
-          <Box className="flex items-center justify-between py-2">
-            <Link href="/dashboard" style={{ textDecoration: "none" }}>
+          <Box 
+          className="flex items-center justify-between py-2"
+          >
+            <Link href="/dashboard" style={{ textDecoration: 'none' }}>
               <Box className="flex items-center gap-1">
-                <Box
-                  sx={{
-                    width: 32,
-                    height: 32,
-                    background:
-                      "linear-gradient(135deg, #1976d2 0%, #7c4dff 100%)",
-                    borderRadius: 2,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
+                <Box sx={{
+                  width: 32,
+                  height: 32,
+                  background: 'linear-gradient(135deg, #1976d2 0%, #7c4dff 100%)',
+                  borderRadius: 2,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
                   <Typography className="text-white font-bold text-sm">
                     F
                   </Typography>
                 </Box>
-                <Typography
-                  sx={{
-                    fontSize: "1.25rem",
-                    fontWeight: "bold",
-                    background:
-                      "linear-gradient(135deg, #1976d2 0%, #7c4dff 100%)",
-                    backgroundClip: "text",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                  }}
-                >
+                    <Typography sx={{
+                  fontSize: '1.25rem',
+                  fontWeight: 'bold',
+                  background: 'linear-gradient(135deg, #1976d2 0%, #7c4dff 100%)',
+                  backgroundClip: 'text',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent'
+                }}>
                   FinanceU
                 </Typography>
               </Box>
             </Link>
             <div className="flex items-center gap-2">
-              <div className="bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300 px-3 py-1 rounded-md text-sm font-medium">
-                Ai Mentor Online <BotIcon sx={{ fontSize: 16, mr: 0.5 }} />
+            <div className="bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300 px-3 py-1 rounded-md text-sm font-medium">
+              Ai Mentor Online <BotIcon sx={{ fontSize: 16, mr: 0.5 }} />
+            </div>
+            <button 
+                onClick={toggleTheme}
+                className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                aria-label="Toggle theme"
+              >
+                {theme === 'light' ? (
+                  <MoonIcon className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+                ) : (
+                  <SunIcon className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+                )}
+              </button>
               </div>
+          </Box>
+        </Container>
+      </Paper> */}
+      <motion.div
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ type: "spring", stiffness: 100 }}
+      >
+        <header className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
+          <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+            <Link
+              href="/dashboard"
+              className="flex items-center gap-2 no-underline"
+            >
+              <motion.div
+                whileHover={{ rotate: 360 }}
+                transition={{ duration: 0.5 }}
+                className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center"
+              >
+                <span className="text-white font-bold text-sm">F</span>
+              </motion.div>
+              <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                FinanceU
+              </span>
+            </Link>
+
+            <nav className="flex items-center gap-6">
+              <Link
+                href="/dashboard"
+                className={`${
+                  isActive("/dashboard")
+                    ? "text-blue-600 dark:text-blue-400 font-medium"
+                    : "text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+                } transition-colors no-underline`}
+              >
+                Dashboard
+              </Link>
+              <Link
+                href="/budget-planner"
+                className={`${
+                  isActive("/budget-planner")
+                    ? "text-blue-600 dark:text-blue-400 font-medium"
+                    : "text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+                } transition-colors no-underline`}
+              >
+                Budget
+              </Link>
+              <Link
+                href="/goals"
+                className={`${
+                  isActive("/goals")
+                    ? "text-blue-600 dark:text-blue-400 font-medium"
+                    : "text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+                } transition-colors no-underline`}
+              >
+                Goals
+              </Link>
+              <Link
+                href="/mentor"
+                className={`${
+                  isActive("/mentor")
+                    ? "text-blue-600 dark:text-blue-400 font-medium"
+                    : "text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+                } transition-colors no-underline`}
+              >
+                AI Mentor
+              </Link>
+              <button
+                onClick={logout}
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-2 rounded-lg font-medium transition-all duration-200 transform hover:scale-105"
+              >
+                <LogOut size={20} />
+              </button>
               <button
                 onClick={toggleTheme}
                 className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
@@ -189,10 +278,10 @@ export default function MentorPage() {
                   <SunIcon className="h-5 w-5 text-gray-700 dark:text-gray-300" />
                 )}
               </button>
-            </div>
-          </Box>
-        </Container>
-      </Paper>
+            </nav>
+          </div>
+        </header>
+      </motion.div>
 
       <Container maxWidth="lg" sx={{ pt: 4 }}>
         <Box sx={{ mb: 4 }}>
@@ -382,7 +471,39 @@ export default function MentorPage() {
                 }
                 disabled={isLoading}
                 size="small"
-                className="bg-white dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700 dark:focus:border-blue-500 dark:placeholder:text-gray-400 dark:focus:border-2 dark:text-gray-100"
+                sx={{
+                  "& .MuiInputBase-input": {
+                    color: theme === "dark" ? "white" : "inherit",
+                  },
+                  "& .MuiInputBase-input::placeholder": {
+                    color:
+                      theme === "dark"
+                        ? "rgba(255,255,255,0.5)"
+                        : "rgba(0,0,0,0.5)",
+                    opacity: 1,
+                  },
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor:
+                      theme === "dark"
+                        ? "rgba(255,255,255,0.3)"
+                        : "rgba(0,0,0,0.23)",
+                  },
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor:
+                      theme === "dark"
+                        ? "rgba(255,255,255,0.5)"
+                        : "rgba(0,0,0,0.87)",
+                  },
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "rgba(59, 130, 246, 0.8)",
+                  },
+                  "& .MuiInputBase-root": {
+                    backgroundColor:
+                      theme === "dark"
+                        ? "rgba(255,255,255,0.05)"
+                        : "transparent",
+                  },
+                }}
               />
               <Button
                 variant="contained"
