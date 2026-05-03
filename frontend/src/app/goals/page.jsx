@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Target, Plus, Calendar, DollarSign, TrendingUp } from "lucide-react";
+import { Target, Plus, Calendar, IndianRupee, TrendingUp } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { logout } from "@/services/authServices";
@@ -552,9 +552,8 @@ const GoalTracker = () => {
                           Need to save
                         </span>
                         <div className="flex items-center gap-1">
-                          <DollarSign className="text-blue-600" size={16} />
+                          <IndianRupee className="text-blue-600" size={16} />
                           <span className="text-sm font-bold text-blue-600 dark:text-blue-400">
-                            ₹
                             {(
                               goal.targetAmount - goal.currentAmount
                             ).toLocaleString()}
