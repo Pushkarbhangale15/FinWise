@@ -14,12 +14,20 @@ const getCurrentBudget = async (req, res) => {
     });
 
     if (!budget) {
-      // Create default budget structure
+      // Create default budget structure with all expense categories
+      const defaultExpenseCategories = ['food', 'books', 'entertainment', 'transport', 'housing', 'utilities', 'healthcare', 'clothing', 'other'];
+      const expensesWithDefaults = defaultExpenseCategories.map(category => ({
+        category,
+        budgeted: 0,
+        actual: 0,
+        transactions: []
+      }));
+
       budget = new Budget({
         userId: req.user._id,
         month: currentMonth,
         income: [],
-        expenses: [],
+        expenses: expensesWithDefaults,
         goals: []
       });
       await budget.save();
@@ -78,12 +86,22 @@ const createOrUpdateBudget = async (req, res) => {
 
       if (goals) budget.goals = goals;
     } else {
-      // Create new budget
+      // Create new budget with default expense categories
+      const defaultExpenseCategories = ['food', 'books', 'entertainment', 'transport', 'housing', 'utilities', 'healthcare', 'clothing', 'other'];
+      const expensesWithDefaults = (expenses && expenses.length > 0) 
+        ? expenses 
+        : defaultExpenseCategories.map(category => ({
+            category,
+            budgeted: 0,
+            actual: 0,
+            transactions: []
+          }));
+
       budget = new Budget({
         userId: req.user._id,
         month: budgetMonth,
         income: income || [],
-        expenses: expenses || [],
+        expenses: expensesWithDefaults,
         goals: goals || []
       });
     }
@@ -125,6 +143,7 @@ const createOrUpdateBudget = async (req, res) => {
 const addExpense = async (req, res) => {
   try {
     const { category, description, amount } = req.body;
+    const normalizedCategory = category.toLowerCase().trim(); // Normalize input
     const currentMonth = new Date().toISOString().substring(0, 7);
 
     const budget = await Budget.findOne({
@@ -139,13 +158,13 @@ const addExpense = async (req, res) => {
       });
     }
 
-    // Find the expense category
-    const expenseCategory = budget.expenses.find(exp => exp.category === category);
+    // Find the expense category (case-insensitive)
+    const expenseCategory = budget.expenses.find(exp => exp.category === normalizedCategory);
     
     if (!expenseCategory) {
       return res.status(400).json({
         success: false,
-        message: 'Invalid expense category'
+        message: `Invalid expense category. Valid categories are: ${budget.expenses.map(e => e.category).join(', ')}`
       });
     }
 
