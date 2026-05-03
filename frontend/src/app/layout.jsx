@@ -13,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "FinanceU",
+  title: "FinWise",
   description:
-    "FinanceU is a platform for learning about finance and investing.",
+    "FinWise is a platform for learning about finance and investing.",
 };
 
 export default function RootLayout({ children }) {

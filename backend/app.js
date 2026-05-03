@@ -86,7 +86,7 @@ app.use('/api/answers', answerRoutes);
 app.get('/api/health', (req, res) => {
   res.json({ 
     success: true, 
-    message: 'FinanceU API is healthy! ;)',
+    message: 'FinWise API is healthy! ;)',
     timestamp: new Date().toISOString()
   });
 });

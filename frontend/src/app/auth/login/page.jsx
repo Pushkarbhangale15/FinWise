@@ -21,7 +21,7 @@ import { useRouter } from "next/navigation";
 
 const LoginPage = () => {
   const router = useRouter();
-  const [email, setEmail] = useState("demo@financeu.com");
+  const [email, setEmail] = useState("demo@FinWise.com");
   const [password, setPassword] = useState("demo123");
   const [error, setError] = useState("");
   const { theme } = useTheme();
@@ -136,7 +136,7 @@ const LoginPage = () => {
                 variant="body1"
                 sx={{ color: theme === "dark" ? "#d1d5db" : "#6b7280" }}
               >
-                Sign in to your FinanceU account
+                Sign in to your FinWise account
               </Typography>
             </Box>
           </motion.div>

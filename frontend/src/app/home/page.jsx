@@ -59,7 +59,7 @@ export default function HomePage() {
               <span className="text-white font-bold text-sm">F</span>
             </div>
             <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              FinanceU
+              FinWise
             </span>
           </div>
           <div className="flex items-center gap-4">
@@ -140,7 +140,7 @@ export default function HomePage() {
           transition={{ duration: 0.5 }}
           className="text-3xl font-bold text-center mb-12 dark:text-white"
         >
-          Why Choose FinanceU?
+          Why Choose FinWise?
         </motion.h2>
         <motion.div
           initial="hidden"
@@ -233,7 +233,7 @@ export default function HomePage() {
           </h2>
           <p className="text-xl mb-8 opacity-90">
             Join thousands of students who are already mastering their money
-            with FinanceU
+            with FinWise
           </p>
           <Link href="/dashboard">
             <button className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-3 rounded-lg font-medium text-lg transition-all duration-200 transform hover:scale-105">
@@ -252,7 +252,7 @@ export default function HomePage() {
       >
         <div className="container mx-auto px-4 py-8 text-center text-gray-600 dark:text-gray-400">
           <p>
-            &copy; 2025 FinanceU. Built with ❤️ for students, by students. 🚀
+            &copy; 2025 FinWise. Built with ❤️ for students, by students. 🚀
           </p>
         </div>
       </motion.footer>

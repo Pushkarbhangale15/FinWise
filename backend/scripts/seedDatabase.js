@@ -273,14 +273,14 @@ const seedBadges = async () => {
 const seedTestUser = async () => {
   try {
     // Check if test user already exists
-    const existingUser = await User.findOne({ email: 'demo@financeu.com' });
+    const existingUser = await User.findOne({ email: 'demo@FinWise.com' });
     if (existingUser) {
       console.log('✅ Demo user already exists');
       return;
     }
 
     const demoUser = new User({
-      email: 'demo@financeu.com',
+      email: 'demo@FinWise.com',
       username: 'demo_student',
       password: 'demo123',
       profile: {
@@ -305,7 +305,7 @@ const seedTestUser = async () => {
 
     await demoUser.save();
     console.log('✅ Demo user created successfully');
-    console.log('   Email: demo@financeu.com');
+    console.log('   Email: demo@FinWise.com');
     console.log('   Password: demo123');
   } catch (error) {
     console.error('❌ Error creating demo user:', error);
@@ -334,7 +334,7 @@ const seedDatabase = async () => {
     console.log('   • 10 Achievement badges with different rarities');
     console.log('   • 1 Demo user account with sample data');
     console.log('\n🔑 Demo Login Credentials:');
-    console.log('   Email: demo@financeu.com');
+    console.log('   Email: demo@FinWise.com');
     console.log('   Password: demo123');
     console.log('\n🚀 Next steps:');
     console.log('   1. Start your server: npm run dev');

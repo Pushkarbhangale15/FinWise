@@ -138,7 +138,7 @@ const SignupPage = () => {
                 variant="body1"
                 sx={{ color: theme === "dark" ? "#d1d5db" : "#6b7280" }}
               >
-                Get started with FinanceU
+                Get started with FinWise
               </Typography>
             </Box>
           </motion.div>
