@@ -7,9 +7,33 @@ const questionController = {
     try {
       const { title, content, tags } = req.body;
 
-      if (!title || !content) {
+      // Validation
+      if (!title || !title.trim()) {
         return res.status(400).json({ 
-          error: 'Title and content are required' 
+          success: false,
+          message: 'Question title is required' 
+        });
+      }
+
+      if (!content || !content.trim()) {
+        return res.status(400).json({ 
+          success: false,
+          message: 'Question content is required' 
+        });
+      }
+
+      // Validate title and content length
+      if (title.length > 200) {
+        return res.status(400).json({ 
+          success: false,
+          message: 'Title must be 200 characters or less' 
+        });
+      }
+
+      if (content.length > 2000) {
+        return res.status(400).json({ 
+          success: false,
+          message: 'Content must be 2000 characters or less' 
         });
       }
 
@@ -19,19 +43,23 @@ const questionController = {
       const question = new Question({
         title: title.trim(),
         content: content.trim(),
-        tags: tags ? tags.map(tag => tag.trim().toLowerCase()) : [],
+        tags: tags && Array.isArray(tags) ? tags.map(tag => tag.trim().toLowerCase()).filter(tag => tag) : [],
         anonymousUsername
       });
 
       const savedQuestion = await question.save();
 
       res.status(201).json({
+        success: true,
         message: 'Question posted successfully',
         question: savedQuestion
       });
     } catch (error) {
       console.error('Error creating question:', error);
-      res.status(500).json({ error: 'Internal server error' });
+      res.status(500).json({ 
+        success: false,
+        message: error.message || 'Failed to create question. Please try again.' 
+      });
     }
   },
 
