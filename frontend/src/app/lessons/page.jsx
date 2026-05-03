@@ -24,6 +24,7 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { usePathname } from "next/navigation";
 import { logout } from "@/services/authServices";
 import { getModules as getLessonModules } from "@/services/lessonServices";
+import useAuth from "@/hooks/useAuth";
 
 // Category icons mapping
 const categoryIcons = {
@@ -51,6 +52,7 @@ const statusColors = {
 };
 
 export default function LessonsPage() {
+  useAuth();
   const router = useRouter();
   const { theme, toggleTheme } = useTheme();
   const pathname = usePathname();

@@ -29,9 +29,12 @@ import {
   completeModule as completeLessonModule,
 } from "@/services/lessonServices";
 
+import useAuth from "@/hooks/useAuth";
+
 // Use services for API interactions
 
 export default function LessonPage() {
+  useAuth();
   const params = useParams();
   const router = useRouter();
   const pathname = usePathname();
