@@ -1121,6 +1121,12 @@ import { useTheme } from "../../contexts/ThemeContext";
 import Link from "next/link";
 import { logout } from "../../services/authServices";
 import { usePathname } from "next/navigation";
+import {
+  sendMessageToAI,
+  getQuickTip,
+  analyzeBudgetWithAI,
+  getLearningPath,
+} from "../../services/chatServices";
 
 export default function MentorPage() {
   const { theme, toggleTheme } = useTheme();
@@ -1380,9 +1386,10 @@ export default function MentorPage() {
       stopListening();
     }
 
+    const currentInput = inputMessage;
     const userMessage = {
       id: Date.now().toString(),
-      content: inputMessage,
+      content: currentInput,
       sender: "user",
       expert: selectedExpert,
       timestamp: new Date(),
@@ -1393,58 +1400,80 @@ export default function MentorPage() {
     setInputMessage("");
     setIsLoading(true);
 
-    // Simulate AI response
-    setTimeout(() => {
+    try {
+      // Call the real Gemini API via backend
+      const response = await sendMessageToAI(currentInput, null, selectedExpert);
       const aiMessage = {
         id: (Date.now() + 1).toString(),
-        content: `Thank you for your question about "${inputMessage}". This is a helpful financial topic for students. Here are some key points to consider:
-
-## Budget Planning
-- Track your income and expenses
-- Use the 50/30/20 rule as a starting point
-- Review and adjust monthly
-
-## Saving Strategies
-- Start with an emergency fund
-- Automate your savings
-- Look for high-yield savings accounts
-
-## Investment Basics
-- Start small and learn
-- Consider index funds for beginners
-- Think long-term
-
-Would you like me to elaborate on any of these points?`,
+        content: response.content || response.message || "Sorry, I couldn't generate a response.",
         sender: "ai",
         expert: selectedExpert,
         timestamp: new Date(),
-        sources: [
-          "https://www.investopedia.com/personal-finance-4427760",
-          "https://www.nerdwallet.com/article/finance/how-to-budget",
-        ],
+        sources: response.sources || [],
       };
-      const finalMessages = [...updatedMessages, aiMessage];
-      setMessages(finalMessages);
+      setMessages([...updatedMessages, aiMessage]);
+    } catch (error) {
+      console.error("Error sending message to AI:", error);
+      const errorMessage = {
+        id: (Date.now() + 1).toString(),
+        content: "Sorry, I encountered an error connecting to the AI. Please try again.",
+        sender: "ai",
+        isError: true,
+        timestamp: new Date(),
+      };
+      setMessages([...updatedMessages, errorMessage]);
+    } finally {
       setIsLoading(false);
-    }, 2000);
+    }
   };
 
   const handleQuickQuestion = (question) => {
     setInputMessage(question);
   };
 
-  const handleQuickAction = (action) => {
+  const handleQuickAction = async (action) => {
     setIsLoading(true);
-    setTimeout(() => {
-      const actionMessage = {
-        id: Date.now().toString(),
-        content: `Here's your ${action} analysis. This feature would connect to your actual financial data in a real implementation.`,
-        sender: "ai",
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, actionMessage]);
+    try {
+      let content = "";
+      if (action === "quick-tip") {
+        const res = await getQuickTip();
+        content = res?.tip || "No tip available right now.";
+      } else if (action === "analyze-budget") {
+        const res = await analyzeBudgetWithAI({});
+        content = res?.analysis || "Could not analyze budget at this time.";
+      } else if (action === "learning-path") {
+        const res = await getLearningPath();
+        const recs = res?.recommendations;
+        if (typeof recs === "string" && recs.trim()) {
+          content = recs.trim();
+        } else if (Array.isArray(recs) && recs.length > 0) {
+          content = `Recommended Learning Path:\n- ${recs.join("\n- ")}`;
+        } else {
+          content = "No recommendations available right now.";
+        }
+      } else {
+        const res = await sendMessageToAI(action, null, selectedExpert);
+        content = res?.content || res?.message || "No response.";
+      }
+      setMessages((prev) => [
+        ...prev,
+        { id: Date.now().toString(), content, sender: "ai", timestamp: new Date() },
+      ]);
+    } catch (error) {
+      console.error("Quick action error:", error);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now().toString(),
+          content: "Failed to get response. Please try again.",
+          sender: "ai",
+          isError: true,
+          timestamp: new Date(),
+        },
+      ]);
+    } finally {
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
   return (
