@@ -96,54 +96,31 @@ const getModule = async (req, res) => {
 const startModule = async (req, res) => {
   try {
     const { id } = req.params;
-    
-    // Check if module exists
+
     const module = await Module.findById(id);
     if (!module) {
-      return res.status(404).json({
-        success: false,
-        message: 'Module not found'
-      });
+      return res.status(404).json({ success: false, message: 'Module not found' });
     }
 
-    // Create or update progress
-    let progress = await Progress.findOne({
-      userId: req.user._id,
-      moduleId: id
-    });
+    // Atomic upsert - safe against race conditions/duplicate calls
+    const progress = await Progress.findOneAndUpdate(
+      { userId: req.user._id, moduleId: id },
+      {
+        $setOnInsert: {        // only written if document is NEW
+          status: 'in_progress',
+          startedAt: new Date()
+        }
+      },
+      { upsert: true, new: true }
+    );
 
-    if (!progress) {
-      progress = new Progress({
-        userId: req.user._id,
-        moduleId: id,
-        status: 'in_progress',
-        startedAt: new Date()
-      });
-    } else {
-      progress.status = 'in_progress';
-      if (!progress.startedAt) {
-        progress.startedAt = new Date();
-      }
-    }
-
-    await progress.save();
-
-    // Update user's current module
     await User.findByIdAndUpdate(req.user._id, {
       'progress.currentModule': id
     });
 
-    res.json({
-      success: true,
-      message: 'Module started successfully',
-      progress
-    });
+    res.json({ success: true, message: 'Module started successfully', progress });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Failed to start module',
-      error: error.message
-    });
+    res.status(500).json({ success: false, message: 'Failed to start module', error: error.message });
   }
 };
 

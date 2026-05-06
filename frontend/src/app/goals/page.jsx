@@ -631,7 +631,7 @@ const GoalTracker = () => {
                       setNewGoal({ ...newGoal, title: e.target.value })
                     }
                     required
-                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2"
+                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white px-3 py-2"
                   />
                 </div>
                 <div>
@@ -643,7 +643,7 @@ const GoalTracker = () => {
                     onChange={(e) =>
                       setNewGoal({ ...newGoal, description: e.target.value })
                     }
-                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2"
+                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white px-3 py-2"
                   />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -659,7 +659,7 @@ const GoalTracker = () => {
                         setNewGoal({ ...newGoal, targetAmount: e.target.value })
                       }
                       required
-                      className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2"
+                      className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white px-3 py-2"
                     />
                   </div>
                   <div>
@@ -673,7 +673,7 @@ const GoalTracker = () => {
                         setNewGoal({ ...newGoal, deadline: e.target.value })
                       }
                       required
-                      className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2"
+                      className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white px-3 py-2"
                     />
                   </div>
                 </div>
@@ -686,7 +686,7 @@ const GoalTracker = () => {
                     onChange={(e) =>
                       setNewGoal({ ...newGoal, category: e.target.value })
                     }
-                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2"
+                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white px-3 py-2"
                   >
                     {[
                       "laptop",
@@ -756,7 +756,7 @@ const GoalTracker = () => {
                       })
                     }
                     required
-                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2"
+                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white px-3 py-2"
                   />
                 </div>
                 <div>
@@ -771,7 +771,7 @@ const GoalTracker = () => {
                         description: e.target.value,
                       })
                     }
-                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2"
+                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white px-3 py-2"
                   />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -790,7 +790,7 @@ const GoalTracker = () => {
                         })
                       }
                       required
-                      className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2"
+                      className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white px-3 py-2"
                     />
                   </div>
                   <div>
@@ -807,7 +807,7 @@ const GoalTracker = () => {
                         })
                       }
                       required
-                      className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2"
+                      className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white px-3 py-2"
                     />
                   </div>
                 </div>
@@ -824,7 +824,7 @@ const GoalTracker = () => {
                           category: e.target.value,
                         })
                       }
-                      className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2"
+                      className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white px-3 py-2"
                     >
                       {[
                         "laptop",
@@ -856,7 +856,7 @@ const GoalTracker = () => {
                           status: e.target.value,
                         })
                       }
-                      className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2"
+                      className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white px-3 py-2"
                     >
                       {["active", "completed", "paused", "cancelled"].map(
                         (s) => (
@@ -920,7 +920,7 @@ const GoalTracker = () => {
                       })
                     }
                     required
-                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2"
+                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white px-3 py-2"
                   />
                 </div>
                 <div>
@@ -935,7 +935,7 @@ const GoalTracker = () => {
                         note: e.target.value,
                       })
                     }
-                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2"
+                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white px-3 py-2"
                   />
                 </div>
                 <div className="flex items-center justify-end gap-2 pt-2">

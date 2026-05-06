@@ -72,7 +72,11 @@ export default function LessonPage() {
 
           // Start the module if not already started
           if (response.module.userProgress?.status === "not_started") {
-            await startLessonModule(moduleId);
+            try {
+              await startLessonModule(moduleId);
+            } catch (err) {
+              console.warn("Start module skipped:", err.message);
+            }
           }
         }
       } catch (err) {
@@ -210,6 +214,11 @@ export default function LessonPage() {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              onClick={() => {
+                if (content.interactiveData?.type === "budget_planner") {
+                  router.push("/budget-planner");
+                }
+              }}
               className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2 mx-auto"
             >
               <Play className="w-5 h-5" />
