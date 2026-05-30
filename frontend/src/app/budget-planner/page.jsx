@@ -144,6 +144,36 @@ export default function BudgetPlannerPage() {
   const [sortBy, setSortBy] = useState("date");
   const [sortOrder, setSortOrder] = useState("desc");
 
+  const rebuildTransactions = (budgetData, prevTransactions = []) => {
+    const serverIncome = budgetData.income.map((income) => ({
+      id: `income-${income.source}`,
+      description: `${income.source.charAt(0).toUpperCase() + income.source.slice(1)} Income`,
+      amount: income.frequency === "weekly" ? income.amount * 4 : income.amount,
+      category: income.source.charAt(0).toUpperCase() + income.source.slice(1),
+      type: "income",
+      date: new Date().toISOString().split("T")[0],
+    }));
+
+    const serverIncomeIds = new Set(serverIncome.map((t) => t.id));
+    const localOnlyIncome = prevTransactions.filter(
+      (t) => t.type === "income" && !serverIncomeIds.has(t.id),
+    );
+
+    const expenses = budgetData.expenses.flatMap((expense) =>
+      (expense.transactions || []).map((transaction) => ({
+        id: `expense-${expense.category}-${transaction._id}`,
+        description: transaction.description,
+        amount: transaction.amount,
+        category:
+          expense.category.charAt(0).toUpperCase() + expense.category.slice(1),
+        type: "expense",
+        date: new Date(transaction.date).toISOString().split("T")[0],
+      })),
+    );
+
+    return [...serverIncome, ...localOnlyIncome, ...expenses];
+  };
+
   useEffect(() => {
     const fetchBudget = async () => {
       try {
@@ -152,38 +182,7 @@ export default function BudgetPlannerPage() {
         if (data.success) {
           setBudgetData(data.budget);
 
-          // Transform income data to transactions
-          const incomeTransactions = data.budget.income.map((income) => ({
-            id: `income-${income.source}-${Date.now()}`,
-            description: `${income.source.charAt(0).toUpperCase() + income.source.slice(1)} Income`,
-            amount:
-              income.frequency === "weekly" ? income.amount * 4 : income.amount,
-            category:
-              income.source.charAt(0).toUpperCase() + income.source.slice(1),
-            type: "income",
-            date: new Date().toISOString().split("T")[0],
-          }));
-
-          // Transform expense transactions
-          const expenseTransactions = data.budget.expenses.flatMap((expense) =>
-            expense.transactions.map((transaction) => ({
-              id: `expense-${expense.category}-${transaction._id || Date.now()}`,
-              description: transaction.description,
-              amount: transaction.amount,
-              category:
-                expense.category.charAt(0).toUpperCase() +
-                expense.category.slice(1),
-              type: "expense",
-              date: new Date(transaction.date).toISOString().split("T")[0],
-            })),
-          );
-
-          // Combine all transactions
-          const allTransactions = [
-            ...incomeTransactions,
-            ...expenseTransactions,
-          ];
-          setTransactions(allTransactions);
+          setTransactions(rebuildTransactions(data.budget));
         }
       } catch (err) {
         setError(err.response?.data?.message || "Failed to fetch budget data");
@@ -357,41 +356,9 @@ export default function BudgetPlannerPage() {
             setBudgetData(budgetResponse.budget);
 
             // Transform and update transactions
-            const incomeTransactions = budgetResponse.budget.income.map(
-              (income) => ({
-                id: `income-${income.source}-${Date.now()}`,
-                description: `${income.source.charAt(0).toUpperCase() + income.source.slice(1)} Income`,
-                amount:
-                  income.frequency === "weekly"
-                    ? income.amount * 4
-                    : income.amount,
-                category:
-                  income.source.charAt(0).toUpperCase() +
-                  income.source.slice(1),
-                type: "income",
-                date: new Date().toISOString().split("T")[0],
-              }),
+            setTransactions(
+              rebuildTransactions(budgetResponse.budget, transactions),
             );
-
-            const expenseTransactions = budgetResponse.budget.expenses.flatMap(
-              (expense) =>
-                expense.transactions.map((transaction) => ({
-                  id: `expense-${expense.category}-${transaction._id || Date.now()}`,
-                  description: transaction.description,
-                  amount: transaction.amount,
-                  category:
-                    expense.category.charAt(0).toUpperCase() +
-                    expense.category.slice(1),
-                  type: "expense",
-                  date: new Date(transaction.date).toISOString().split("T")[0],
-                })),
-            );
-
-            const allTransactions = [
-              ...incomeTransactions,
-              ...expenseTransactions,
-            ];
-            setTransactions(allTransactions);
           }
         }
       } else {
@@ -450,41 +417,9 @@ export default function BudgetPlannerPage() {
             setBudgetData(budgetResponse.budget);
 
             // Transform and update transactions
-            const incomeTransactions = budgetResponse.budget.income.map(
-              (income) => ({
-                id: `income-${income.source}-${Date.now()}`,
-                description: `${income.source.charAt(0).toUpperCase() + income.source.slice(1)} Income`,
-                amount:
-                  income.frequency === "weekly"
-                    ? income.amount * 4
-                    : income.amount,
-                category:
-                  income.source.charAt(0).toUpperCase() +
-                  income.source.slice(1),
-                type: "income",
-                date: new Date().toISOString().split("T")[0],
-              }),
+            setTransactions(
+              rebuildTransactions(budgetResponse.budget, transactions),
             );
-
-            const expenseTransactions = budgetResponse.budget.expenses.flatMap(
-              (expense) =>
-                expense.transactions.map((transaction) => ({
-                  id: `expense-${expense.category}-${transaction._id || Date.now()}`,
-                  description: transaction.description,
-                  amount: transaction.amount,
-                  category:
-                    expense.category.charAt(0).toUpperCase() +
-                    expense.category.slice(1),
-                  type: "expense",
-                  date: new Date(transaction.date).toISOString().split("T")[0],
-                })),
-            );
-
-            const allTransactions = [
-              ...incomeTransactions,
-              ...expenseTransactions,
-            ];
-            setTransactions(allTransactions);
           }
         }
       } else {
@@ -549,35 +484,9 @@ export default function BudgetPlannerPage() {
       if (budgetResponse.success) {
         setBudgetData(budgetResponse.budget);
 
-        const incomeTransactions = budgetResponse.budget.income.map(
-          (income) => ({
-            id: `income-${income.source}-${Date.now()}`,
-            description: `${income.source.charAt(0).toUpperCase() + income.source.slice(1)} Income`,
-            amount:
-              income.frequency === "weekly" ? income.amount * 4 : income.amount,
-            category:
-              income.source.charAt(0).toUpperCase() + income.source.slice(1),
-            type: "income",
-            date: new Date().toISOString().split("T")[0],
-          }),
-        );
-
-        const expenseTransactions = budgetResponse.budget.expenses.flatMap(
-          (expense) =>
-            (expense.transactions || []).map((transaction) => ({
-              id: `expense-${expense.category}-${transaction._id || Date.now()}`,
-              description: transaction.description,
-              amount: transaction.amount,
-              category:
-                expense.category.charAt(0).toUpperCase() +
-                expense.category.slice(1),
-              type: "expense",
-              date: new Date(transaction.date).toISOString().split("T")[0],
-            })),
-        );
-
-        const allTransactions = [...incomeTransactions, ...expenseTransactions];
-        setTransactions(allTransactions);
+       setTransactions(
+         rebuildTransactions(budgetResponse.budget, transactions),
+       );
       }
 
       setSuccessMessage(response.message || "Budget saved successfully");
