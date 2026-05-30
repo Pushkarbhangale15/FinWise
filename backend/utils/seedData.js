@@ -51,6 +51,96 @@ const sampleModules = [
       criteria: { budgetsCreated: 1 },
       rarity: "common",
       xpBonus: 15
+    },
+    {
+      name: "First Answer",
+      description: "Posted your first answer to help someone",
+      icon: "🎯",
+      category: "community",
+      criteria: { firstAnswer: true },
+      rarity: "common",
+      xpBonus: 25
+    },
+    {
+      name: "Daily Helper",
+      description: "Posted 3 answers in one day",
+      icon: "📝",
+      category: "community",
+      criteria: { answersInOneDay: 3 },
+      rarity: "common",
+      xpBonus: 20
+    },
+    {
+      name: "Helpful Helper",
+      description: "Posted 5 helpful answers",
+      icon: "🤝",
+      category: "community",
+      criteria: { helpfulAnswers: 5 },
+      rarity: "common",
+      xpBonus: 30
+    },
+    {
+      name: "Answer Expert",
+      description: "Posted 25 answers",
+      icon: "🧠",
+      category: "community",
+      criteria: { totalAnswers: 25 },
+      rarity: "rare",
+      xpBonus: 50
+    },
+    {
+      name: "Accepted Solution",
+      description: "Had your answer accepted as the solution",
+      icon: "✅",
+      category: "community",
+      criteria: { acceptedAnswers: 1 },
+      rarity: "rare",
+      xpBonus: 50
+    },
+    {
+      name: "Helpful Community Member",
+      description: "Posted 3 helpful answers (5+ upvotes each)",
+      icon: "⭐",
+      category: "community",
+      criteria: { helpfulAnswers: 3 },
+      rarity: "rare",
+      xpBonus: 40
+    },
+    {
+      name: "Answer Enthusiast",
+      description: "Posted 5 answers in one day",
+      icon: "⚡",
+      category: "community",
+      criteria: { answersInOneDay: 5 },
+      rarity: "rare",
+      xpBonus: 45
+    },
+    {
+      name: "Answer Master",
+      description: "Posted 100 answers",
+      icon: "👑",
+      category: "community",
+      criteria: { totalAnswers: 100 },
+      rarity: "epic",
+      xpBonus: 150
+    },
+    {
+      name: "Trusted Expert",
+      description: "Had 5 answers accepted as solutions",
+      icon: "🏆",
+      category: "community",
+      criteria: { acceptedAnswers: 5 },
+      rarity: "epic",
+      xpBonus: 100
+    },
+    {
+      name: "Community Champion",
+      description: "Had 25 answers accepted as solutions",
+      icon: "🥇",
+      category: "community",
+      criteria: { acceptedAnswers: 25 },
+      rarity: "legendary",
+      xpBonus: 500
     }
   ];
 

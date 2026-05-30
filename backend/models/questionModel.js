@@ -22,6 +22,11 @@ const questionSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: false // Kept optional for backward compatibility with old questions
+  },
   upvotes: {
     type: Number,
     default: 0

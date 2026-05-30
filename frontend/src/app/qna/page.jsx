@@ -251,6 +251,7 @@ const QnAPage = () => {
         title: questionForm.title.trim(),
         content: questionForm.content.trim(),
         tags: tagsArray,
+        userId: user.id
         // Note: category and priority are frontend-only for now
         // Backend model doesn't have these fields yet
       };

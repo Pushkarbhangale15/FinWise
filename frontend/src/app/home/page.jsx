@@ -252,7 +252,7 @@ export default function HomePage() {
       >
         <div className="container mx-auto px-4 py-8 text-center text-gray-600 dark:text-gray-400">
           <p>
-            &copy; 2025 FinWise. Built with ❤️ for students, by students. 🚀
+            &copy; 2026 FinWise. Built with ❤️ for students, by students. 🚀
           </p>
         </div>
       </motion.footer>

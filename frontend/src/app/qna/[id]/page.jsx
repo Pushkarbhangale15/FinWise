@@ -214,7 +214,7 @@ const QuestionDetailPage = () => {
   };
 
   const handleMarkResolved = async (answerId) => {
-    if (!user || question.anonymousUsername) {
+    if (!user || question.userId !== user.id) {
       alert("Only the question author can mark it as resolved");
       return;
     }

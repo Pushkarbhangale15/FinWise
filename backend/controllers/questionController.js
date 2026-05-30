@@ -5,7 +5,7 @@ const questionController = {
   // Create a new question
   async createQuestion(req, res) {
     try {
-      const { title, content, tags } = req.body;
+      const { title, content, tags, userId } = req.body;
 
       // Validation
       if (!title || !title.trim()) {
@@ -44,7 +44,8 @@ const questionController = {
         title: title.trim(),
         content: content.trim(),
         tags: tags && Array.isArray(tags) ? tags.map(tag => tag.trim().toLowerCase()).filter(tag => tag) : [],
-        anonymousUsername
+        anonymousUsername,
+        userId: userId || null
       });
 
       const savedQuestion = await question.save();

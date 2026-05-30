@@ -1,127 +1,138 @@
+# FinWise - Financial Literacy Platform for Students
 
+## 1. Project Overview
+FinWise is a comprehensive, full-stack web application designed to empower students with financial literacy. By combining interactive learning modules, practical financial tools, gamification, and AI-driven guidance, the platform helps users manage their money effectively and build long-term financial health.
 
-# FinWise — Gamified Financial Learning Platform
+## 2. Architecture & Tech Stack
+The project follows a decoupled client-server architecture.
+- **Frontend**: Next.js 15+ (React), Tailwind CSS, Framer Motion, Recharts, Material UI. It also utilizes `react-markdown` and `remark-gfm` for rendering rich text responses from the AI.
+- **Backend**: Node.js, Express.js.
+- **Database**: MongoDB (Mongoose).
+- **AI Integration**: Google Gemini API (for financial advice, budget analysis, and learning paths).
 
-**FinWise** is a web-based gamified learning platform designed to help students build essential financial literacy skills. Through interactive lessons, gamification elements, and AI-powered tools, FinWise makes learning about money engaging, practical, and personalized.
+## 3. Core Features & Functional Requirements
 
+### 3.1 Authentication & User Management
+- JWT-based authentication.
+- Secure password hashing (bcrypt).
+- User profiles storing gamification stats, financial goals, and preferences.
 
+### 3.2 Learning Management System (Modules)
+- Interactive learning modules covering topics like Budgeting, Investing, Debt, and Taxes.
+- Modules have difficulty levels (beginner, intermediate, advanced) and are sequential.
+- Progress tracking: Not Started, In Progress, Completed.
+- Quizzes embedded in modules; completion grants XP and updates user progress.
 
----
+### 3.3 Budgeting & Financial Tracking
+- Monthly budget creation and management.
+- Tracking of total income, expenses by category (e.g., food, travel, rent), and savings.
+- Auto-calculation of budget health metrics.
+- Gamification tie-in: Creating and maintaining budgets contributes to badges and streaks.
 
-## 🚀 Features (MVP Scope)
+### 3.4 Goal Setting
+- Users can define specific financial goals (e.g., "Emergency Fund", "Buy a Laptop").
+- Track target amounts, saved amounts, and deadlines.
+- Milestone tracking within goals.
 
-### 1. Interactive Learning Modules
-- Micro-lessons (5–10 minutes) covering:
-  - Budgeting
-  - Saving
-  - Investing basics
-  - Loans & credit
-  - Taxes
-- Real-world decision-tree scenarios (e.g., *"You got your first job, now what?"*)
-- Visual simulations:
-  - Compound interest calculator
-  - Budget allocation pie charts
+### 3.5 Gamification Engine
+A centralized, highly robust gamification system (`gamification.js`).
+- **XP & Leveling**: Users earn XP through module completion, budget tracking, and daily logins. Levels increase automatically as XP thresholds are met.
+- **Streaks & Weekly Challenges**: Tracking daily activity. Consecutive logins/actions build a streak, which yields bonus XP. Users also receive Weekly Challenges (e.g., "Track expenses for 7 days") on their dashboard.
+- **Badges**: Dynamic badge awarding system evaluating criteria across collections (e.g., completing 5 modules, creating 3 budgets).
+- **Leaderboards**: Competitive ranking of users based on XP.
 
-### 2. Gamification Elements
-- Achievement badges: *Budget Master*, *Investment Rookie*, *Debt Destroyer*
-- XP points and progress tracking for completed modules
+### 3.6 AI Mentor (Google Gemini Integration)
+- Context-aware chatbot providing personalized financial advice.
+- Specialized "Experts" (e.g., Credit, Investment, Savings).
+- Quick Actions: One-click buttons to generate a "Quick Tip", "Analyze Budget", or "Generate Learning Path".
+- Voice input support (SpeechRecognition API) for conversational interactions.
 
-### 3. Practical Tools
-- **Student Budget Planner**: Track income (part-time jobs, allowances) vs expenses (food, books, entertainment)
-- **Goal Setting**: Save for laptop, trip, or emergency fund with progress bars
-- Expense categorization with spending insights
+### 3.7 Community Q&A
+- StackOverflow-style Q&A forum.
+- Users can post questions (anonymously if desired) and answer others.
+- Upvote/Downvote system for questions and answers.
+- Original poster can mark answers as "Resolved/Accepted" and "Helpful".
+- Includes view counts, answer counts, and categorization.
 
-### 4. AI-Powered Features
-- Personalized recommendations based on spending patterns
-- AI chatbot mentor for quick financial questions
-- Risk assessment for student-friendly investment options
+### 3.8 Financial Calculators & Tools
+- Compound Interest Calculator.
+- EMI (Equated Monthly Installment) Calculator.
+- SIP (Systematic Investment Plan) Calculator.
+- Investment Advisor Tool.
 
----
+### 3.9 Accessibility & Theming
+- Universal Light/Dark mode toggling managed via `ThemeContext` and persisted in `localStorage`.
 
-## 🛠 Tech Stack
-- **Frontend:** React.js (with engaging animations)
-- **Backend:** Node.js + Express
-- **Database:** MongoDB (user progress tracking)
-- **AI Integration:** Gemini API (chatbot)
-- **Charts & Visualization:** Chart.js
+## 4. Backend Technical Details
 
----
+### 4.1 Data Models (Mongoose Schemas)
+- `User`: Profile info, financial profile, gamification state (XP, level, streak, lastActiveDate).
+- `Budget`: Monthly budgets, itemized expenses, virtual properties for total calculation.
+- `Goal`: Financial goals with milestones.
+- `Module`: Educational content structure, interactive sections, and quizzes.
+- `Progress`: Tracks a user's progress through modules (time spent, status, quiz scores).
+- `Chat`: Stores conversational history with the AI mentor.
+- `Badge` & `UserBadge`: Badge definitions and tracking which user earned what badge.
+- `Question` & `Answer`: Community Q&A data with voting metrics.
 
+### 4.2 Key Controllers & Services
+- `authController.js` & `userController.js`: Handles registration, login, and profile management.
+- `gamificationController.js` & `badgeController.js`: Manages streaks, leaderboards, progress retrieval, and badge awarding.
+- `budgetController.js`: CRUD for budgets, automatically triggers gamification updates.
+- `goalController.js`: CRUD for financial goals and milestones.
+- `chatController.js`: Manages the flow between the user and the Google Gemini API (`utils/aiHelper.js`).
+- `moduleController.js`: Handles progress updates, quiz submissions, and XP rewards.
+- `questionController.js` & `answerController.js`: Manages community Q&A forums, upvoting, and resolutions.
+- `toolsController.js`: Contains logic for financial calculators and the investment advisor tool.
 
-````
+### 4.3 Security, Middleware & Utilities
+- `helmet` for secure HTTP headers.
+- `express-rate-limit` to prevent abuse.
+- Custom `auth` middleware for JWT verification.
+- `Joi` schema validation (`utils/validation.js`) to strictly validate incoming API payload data.
+- **Other Utilities**: Includes `usernameGenerator.js` (for anonymous Q&A) and `calculations.js` (for SIP/EMI math).
 
----
+## 5. Frontend Technical Details
 
-## ⚙️ Installation & Setup
+### 5.1 Routing & Pages (Next.js App Router)
+- `/home`: The public landing page showcasing the platform's features.
+- `/auth/login` & `/auth/register`: User authentication flows.
+- `/dashboard`: Main hub showing XP, level, recent lessons, badges, and weekly challenges.
+- `/budget-planner`: Interface for tracking income and expenses.
+- `/goals`: Interface for setting and managing financial targets.
+- `/lessons`: Module catalog with filtering by category, difficulty, and status.
+- `/lessons/[id]`: Interactive lesson viewer and quiz interface.
+- `/mentor`: AI Chat interface with voice input and expert selection.
+- `/qna` & `/qna/[id]`: Community forum lists and detailed discussion views.
 
-### Prerequisites
-- Node.js (v16+ recommended)
-- npm or yarn
-- MongoDB database connection
+### 5.2 Contexts & State
+- `ThemeContext`: Handles light/dark mode toggling, persisting preference to `localStorage`.
+- `useAuth`: Custom hook to protect routes and manage authentication state.
 
-### Steps
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/yourusername/FinWise.git
-   cd FinWise
-````
+### 5.3 Services (Axios Interceptors)
+- Standardized API calls through configured Axios instances attaching JWT tokens to headers.
+- Modularized service files (`api.js`, `authServices.js`, `chatServices.js`, `qnaServices.js`, `lessonServices.js`, `budgetServices.js`, `goalServices.js`, `userServices.js`).
 
-2. **Install dependencies**
-   For backend:
+## 6. Environment & Setup
 
-   ```bash
-   cd backend
-   npm install
-   ```
+### Environment Variables
+**Backend (`.env`)**:
+- `PORT`
+- `MONGODB_URI`
+- `JWT_SECRET`
+- `GEMINI_API_KEY` (Required for AI features)
+- `FRONTEND_URL` (For CORS)
 
-   For frontend:
+**Frontend (`.env`)**:
+- `BACKEND_API_URL`
 
-   ```bash
-   cd frontend
-   npm install
-   ```
+### Scripts
+- `npm run dev`: Starts the respective development servers.
+- Backend includes a `seedDatabase.js` utility for populating initial modules and badges.
 
-3. **Set up environment variables**
-   Create `.env` files in both backend and frontend folders:
-
-   ```
-   # Backend
-   MONGO_URI=your_mongodb_connection_string
-   GEMINI_API_KEY=your_gemini_api_key
-   PORT=5000
-
-   # Frontend
-   REACT_APP_API_BASE_URL=http://localhost:5000
-   ```
-
-4. **Run the project**
-
-   ```bash
-   # Start backend
-   cd backend
-   npm run dev
-
-   # Start frontend
-   cd frontend
-   npm start
-   ```
-
----
-
-## 📈 Future Improvements
-
-* Leaderboards for competitive learning
-* Social sharing of achievements
-* Expanded lesson library (e.g., insurance, retirement planning)
-* Mobile app version
-* More AI-driven personalization features
-
-
----
-
-## 💡 About
-
-FinWise is built as an MVP to demonstrate how gamification and AI can transform financial literacy education for students.
-It combines **practical tools**, **interactive learning**, and **personalized guidance** into a single engaging platform.
-
-
+## 7. Notes for AI SRS Generation
+When using this document to generate a Software Requirements Specification (SRS), please ensure to extract and formalize:
+- **Use Cases**: Based on the features listed in Section 3 (e.g., "User tracks daily streak", "User completes module quiz").
+- **Non-Functional Requirements**: Derived from the Security & Architecture sections (e.g., JWT Auth, Rate limiting).
+- **Data Dictionary / Entity-Relationships**: Mapped from the models in Section 4.1.
+- **State Diagrams**: For User Progress (Not Started -> In Progress -> Completed) and Goal Tracking.
