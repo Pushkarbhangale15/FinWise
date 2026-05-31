@@ -14,7 +14,10 @@ const calculateCompoundInterest = (principal, rate, time, compoundFreq = 12) => 
   };
   
   const calculateBudgetHealth = (income, expenses) => {
-    const totalIncome = income.reduce((sum, item) => sum + item.amount, 0);
+    const totalIncome = income.reduce((sum, item) => {
+      if (item.frequency === "weekly") return sum + item.amount * 4;
+      return sum + item.amount;
+    }, 0);
     const totalExpenses = expenses.reduce((sum, item) => sum + item.actual, 0);
     const savings = totalIncome - totalExpenses;
     const savingsRate = (savings / totalIncome) * 100;

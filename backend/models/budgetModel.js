@@ -1,95 +1,121 @@
 const mongoose = require('mongoose');
 
-const budgetSchema = new mongoose.Schema({
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
-  },
-  month: {
-    type: String,
-    required: true,
-    match: /^\d{4}-\d{2}$/ // YYYY-MM format
-  },
-  income: [{
-    source: {
+const budgetSchema = new mongoose.Schema(
+  {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    month: {
       type: String,
       required: true,
-      enum: ['allowance', 'part-time', 'scholarship', 'freelance', 'other']
+      match: /^\d{4}-\d{2}$/, // YYYY-MM format
     },
-    amount: {
-      type: Number,
-      required: true,
-      min: 0
-    },
-    frequency: {
-      type: String,
-      required: true,
-      enum: ['monthly', 'weekly', 'one-time']
-    }
-  }],
-  expenses: [{
-    category: {
-      type: String,
-      required: true,
-      enum: ['food', 'books', 'entertainment', 'transport', 'housing', 'utilities', 'healthcare', 'clothing', 'other']
-    },
-    budgeted: {
-      type: Number,
-      required: true,
-      min: 0
-    },
-    actual: {
-      type: Number,
-      default: 0,
-      min: 0
-    },
-    transactions: [{
-      description: {
-        type: String,
-        required: true,
-        trim: true
+    income: [
+      {
+        source: {
+          type: String,
+          required: true,
+          enum: ["allowance", "part-time", "scholarship", "freelance", "other"],
+        },
+        amount: {
+          type: Number,
+          required: true,
+          min: 0,
+        },
+        frequency: {
+          type: String,
+          required: true,
+          enum: ["monthly", "weekly", "one-time"],
+        },
+        date: {
+          // ← add this
+          type: Date,
+          default: Date.now,
+        },
       },
-      amount: {
-        type: Number,
-        required: true
+    ],
+    expenses: [
+      {
+        category: {
+          type: String,
+          required: true,
+          enum: [
+            "food",
+            "books",
+            "entertainment",
+            "transport",
+            "housing",
+            "utilities",
+            "healthcare",
+            "clothing",
+            "other",
+          ],
+        },
+        budgeted: {
+          type: Number,
+          required: true,
+          min: 0,
+        },
+        actual: {
+          type: Number,
+          default: 0,
+          min: 0,
+        },
+        transactions: [
+          {
+            description: {
+              type: String,
+              required: true,
+              trim: true,
+            },
+            amount: {
+              type: Number,
+              required: true,
+            },
+            date: {
+              type: Date,
+              required: true,
+              default: Date.now,
+            },
+          },
+        ],
       },
-      date: {
-        type: Date,
-        required: true,
-        default: Date.now
-      }
-    }]
-  }],
-  goals: [{
-    name: {
-      type: String,
-      required: true,
-      trim: true
-    },
-    targetAmount: {
-      type: Number,
-      required: true,
-      min: 0
-    },
-    savedAmount: {
-      type: Number,
-      default: 0,
-      min: 0
-    },
-    deadline: {
-      type: Date,
-      required: true
-    },
-    priority: {
-      type: String,
-      required: true,
-      enum: ['high', 'medium', 'low']
-    }
-  }]
-}, {
-  timestamps: true
-});
+    ],
+    goals: [
+      {
+        name: {
+          type: String,
+          required: true,
+          trim: true,
+        },
+        targetAmount: {
+          type: Number,
+          required: true,
+          min: 0,
+        },
+        savedAmount: {
+          type: Number,
+          default: 0,
+          min: 0,
+        },
+        deadline: {
+          type: Date,
+          required: true,
+        },
+        priority: {
+          type: String,
+          required: true,
+          enum: ["high", "medium", "low"],
+        },
+      },
+    ],
+  },
+  {
+    timestamps: true,
+  },
+);
 
 // Compound index to ensure one budget per user per month
 budgetSchema.index({ userId: 1, month: 1 }, { unique: true });

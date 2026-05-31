@@ -151,7 +151,11 @@ export default function BudgetPlannerPage() {
       amount: income.frequency === "weekly" ? income.amount * 4 : income.amount,
       category: income.source.charAt(0).toUpperCase() + income.source.slice(1),
       type: "income",
-      date: new Date().toISOString().split("T")[0],
+      date: income.date
+        ? new Date(income.date).toISOString().split("T")[0]
+        : budgetData.month
+          ? `${budgetData.month}-01`
+          : new Date().toISOString().split("T")[0],
     }));
 
     const serverIncomeIds = new Set(serverIncome.map((t) => t.id));
@@ -205,6 +209,7 @@ export default function BudgetPlannerPage() {
               source: i.source || "allowance",
               amount: i.amount?.toString() || "",
               frequency: i.frequency || "monthly",
+              date: i.date || new Date().toISOString(), // ← preserve existing date
             }))
           : [{ source: "allowance", amount: "", frequency: "monthly" }],
       );
@@ -362,19 +367,54 @@ export default function BudgetPlannerPage() {
           }
         }
       } else {
-        // For income transactions, just add to local state for now
-        const transaction = {
-          id: Date.now().toString(),
-          description: newTransaction.description,
-          amount: parseFloat(newTransaction.amount),
-          category: newTransaction.category,
-          type: newTransaction.type,
-          date: new Date().toISOString().split("T")[0],
+        const currentIncome = budgetData?.income || [];
+
+        const existingIndex = currentIncome.findIndex(
+          (i) => i.source === newTransaction.category.toLowerCase(),
+        );
+
+        let updatedIncome;
+        if (existingIndex >= 0) {
+          updatedIncome = currentIncome.map((i, idx) =>
+            idx === existingIndex
+              ? { ...i, amount: i.amount + parseFloat(newTransaction.amount) }
+              : i,
+          );
+        } else {
+          updatedIncome = [
+            ...currentIncome,
+            {
+              source: newTransaction.category.toLowerCase(),
+              amount: parseFloat(newTransaction.amount),
+              frequency: "monthly",
+              date: new Date().toISOString(), // ← saved to server
+            },
+          ];
+        }
+
+        const payload = {
+          month: budgetData?.month || new Date().toISOString().substring(0, 7),
+          income: updatedIncome,
+          expenses:
+            budgetData?.expenses?.map((e) => ({
+              category: e.category,
+              budgeted: e.budgeted,
+              actual: e.actual,
+            })) || [],
+          goals: budgetData?.goals || [],
         };
 
-        setTransactions([...transactions, transaction]);
+        const saveResponse = await createOrUpdateBudget(payload);
+        if (saveResponse.success) {
+          const budgetResponse = await getBudget();
+          if (budgetResponse.success) {
+            setBudgetData(budgetResponse.budget);
+            setTransactions(
+              rebuildTransactions(budgetResponse.budget, transactions),
+            );
+          }
+        }
       }
-
       // Reset form
       setNewTransaction({
         description: "",
@@ -446,6 +486,7 @@ export default function BudgetPlannerPage() {
             source: i.source.toLowerCase(),
             amount: parseFloat(i.amount),
             frequency: i.frequency.toLowerCase(),
+            date: i.date || new Date().toISOString(), // ← add this
           })),
         expenses: formExpenses
           .filter((e) => e.category && e.budgeted !== "")
@@ -960,9 +1001,9 @@ export default function BudgetPlannerPage() {
               <CardContent>
                 <div className="grid gap-3 ">
                   {transactions.length > 0 ? (
-                    transactions
-                      .slice(-5)
-                      .reverse()
+                    [...transactions]
+                      .sort((a, b) => new Date(b.date) - new Date(a.date))
+                      .slice(0, 5)
                       .map((transaction) => (
                         <Paper
                           key={transaction.id}
